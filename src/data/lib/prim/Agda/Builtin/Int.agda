@@ -16,3 +16,8 @@ data Int : Set where
 {-# BUILTIN INTEGERNEGSUC negsuc #-}
 
 primitive primShowInteger : Int → String
+
+{-# COMPILED_JS Int function(x,v) { if (x < 0) { return v.negsuc(-(x+1)); } else { return v.pos(x); }} #-}
+{-# COMPILED_JS pos function(x) { return x; } #-}
+{-# COMPILED_JS negsuc function(x) { return (-x-1); } #-}
+{-# COMPILED_JS primShowInteger function(x) { return x.toString(); } #-}

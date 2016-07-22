@@ -20,6 +20,32 @@ postulate
 {-# COMPILED_EPIC _>>=_ (u1 : Unit, u2 : Unit, x : Any, f : Any) -> Any = iobind(x,f) #-}
 {-# COMPILED_UHC return (\_ _ x -> UHC.Agda.Builtins.primReturn x) #-}
 {-# COMPILED_UHC _>>=_ (\_ _ _ _ x y -> UHC.Agda.Builtins.primBind x y) #-}
+{-# COMPILED_JS return
+  function (u0) {
+    return function (u1) {
+      return function (x) {
+        return x;
+      };
+    };
+  }
+#-}
+-- The definition below uses y.apply() instead of y() to prevent the JS code
+-- generator (or something?) from removing the value x.
+{-# COMPILED_JS _>>=_
+  function(u0) {
+    return function(u1) {
+      return function(u2) {
+        return function(u3) {
+           return function(x) {
+             return function(y) {
+               return y.apply(this, Array(x));
+             };
+           };
+        };
+      };
+    };
+  }
+#-}
 
 
 {-# IMPORT Data.Text.IO #-}
@@ -30,6 +56,7 @@ postulate
 {-# COMPILED putStr Data.Text.IO.putStr #-}
 {-# COMPILED_EPIC putStr (a : String, u : Unit) -> Unit = foreign Int "wputStr" (a : String); primUnit #-}
 {-# COMPILED_UHC putStr (UHC.Agda.Builtins.primPutStr) #-}
+{-# COMPILED_JS putStr function (x) { return process.stdout.write(x); } #-}
 
 
 printChar : Char -> IO Unit
